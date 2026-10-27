@@ -12,6 +12,16 @@ test/test.js        Automated checks (npm test)
 .env.example        Every configurable value
 ```
 
+## Video intro (home page)
+
+The first time someone opens the site in a browser session, a full-screen video plays behind the VICORA logo and a centred menu. "Enter site", Esc, or any menu link dismisses it. It won't show again until the next session, and you can force it with `/?intro=1`. Under reduced-motion settings the video stays paused.
+
+**Videos:** there are two cuts of the same 12-second seamless loop. `public/intro.mp4` (1920x1080) plays on desktops and landscape screens, and `public/intro-portrait.mp4` (1080x1920) plays on phones. Each has a matching `-poster.jpg` still that shows while it loads. The page picks the right cut automatically.
+
+To use your own footage, replace either file with the same name (H.264 MP4, muted, short loop, ideally under 4 MB). If you only have one video, use it for both names. Browsers only autoplay muted video.
+
+The Instagram/LinkedIn icons on the intro appear only when `INSTAGRAM_URL` / `LINKEDIN_URL` are set.
+
 ## 1. Run it
 
 ```bash

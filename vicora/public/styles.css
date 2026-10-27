@@ -244,3 +244,26 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);
 }
 
 .result-note{margin-top:10px;color:var(--muted)}
+
+/* ---------- full-screen video intro (home, once per session) ---------- */
+.intro{display:none}
+.intro-on .intro{display:flex}
+.intro-on body{overflow:hidden}
+.intro{position:fixed;inset:0;z-index:300;align-items:center;justify-content:center;background:var(--bg);overflow:hidden;transition:opacity .7s ease,visibility .7s}
+.intro.is-leaving{opacity:0;visibility:hidden}
+.intro-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.intro-shade{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(11,13,16,.25),rgba(11,13,16,.7))}
+.intro-inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:32px;padding:24px;text-align:center}
+.intro-logo .wm-mark{width:56px;height:56px}
+.intro-logo .wm-text{font-size:clamp(1.8rem,6vw,2.6rem)}
+.intro-menu{list-style:none;margin:0;padding:0;display:grid;gap:20px}
+.intro-menu a{color:var(--text);text-decoration:none;text-transform:uppercase;font-weight:600;letter-spacing:.16em;font-size:clamp(1rem,2.4vw,1.2rem);text-shadow:0 1px 12px rgba(0,0,0,.6);transition:color .2s}
+.intro-menu a:hover{color:var(--accent)}
+.intro-social{list-style:none;margin:0;padding:0;display:flex;gap:18px}
+.intro-social a{color:var(--text);display:inline-flex}
+.intro-social svg{width:32px;height:32px}
+.intro-social a:hover{color:var(--accent)}
+.intro-logo,.intro-menu,.intro-enter{animation:introRise .9s ease both}
+.intro-menu{animation-delay:.15s}.intro-enter{animation-delay:.3s}
+@keyframes introRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+[tabindex="-1"]:focus{outline:none}

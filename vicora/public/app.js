@@ -9,6 +9,41 @@
   // dynamic copyright year
   var y = $('#year'); if (y) y.textContent = new Date().getFullYear();
 
+  // ---------- full-screen video intro (home, once per session) ----------
+  var intro = $('#intro'), root = document.documentElement, site = $('.site');
+  if (intro && root.classList.contains('intro-on')) {
+    var vid = $('.intro-video', intro);
+    if (vid) {
+      // pick the portrait cut on phones / tall screens, landscape otherwise
+      var tall = window.matchMedia && window.matchMedia('(max-aspect-ratio: 1/1)').matches;
+      var key = tall ? 'portrait' : 'landscape';
+      vid.poster = vid.getAttribute('data-' + key + '-poster');
+      if (!reduce) {
+        vid.preload = 'auto'; vid.src = vid.getAttribute('data-' + key);
+        var pr = vid.play(); if (pr && pr.catch) pr.catch(function () { /* autoplay blocked: poster stays */ });
+      }
+    }
+    if (site) { site.setAttribute('inert', ''); site.setAttribute('aria-hidden', 'true'); }
+    var markSeen = function () { try { sessionStorage.setItem('vicora_intro_seen', '1'); } catch (e) { } };
+    var closeIntro = function () {
+      markSeen();
+      if (site) { site.removeAttribute('inert'); site.removeAttribute('aria-hidden'); }
+      intro.classList.add('is-leaving');
+      setTimeout(function () { root.classList.remove('intro-on'); intro.classList.remove('is-leaving'); if (vid) vid.pause(); }, reduce ? 0 : 700);
+      var h = $('#main h1'); if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); }
+    };
+    $('.intro-enter', intro).addEventListener('click', closeIntro);
+    $$('a', intro).forEach(function (a) { a.addEventListener('click', markSeen); });
+    intro.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') return closeIntro();
+      if (e.key !== 'Tab') return;
+      var f = $$('a[href],button', intro); if (!f.length) return;
+      if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
+    });
+    intro.setAttribute('tabindex', '-1'); setTimeout(function () { intro.focus({ preventScroll: true }); }, 50);
+  }
+
   // mobile nav
   var toggle = $('.nav-toggle'), nav = $('#site-nav');
   if (toggle && nav) {

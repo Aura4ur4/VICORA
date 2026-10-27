@@ -18,7 +18,7 @@ const valid = { name: 'Asha Rao', email: 'asha@acme.com', company: 'Acme Agency'
   const files = fs.readdirSync(DIST);
   const pages = files.filter(f => f.endsWith('.html'));
   await ok('all 7 pages + 404 exist', () => ['index', 'services', 'solutions', 'industries', 'about', 'contact', 'privacy', '404'].forEach(n => assert(files.includes(n + '.html'), n)));
-  await ok('sitemap, robots, favicon, og image present', () => ['sitemap.xml', 'robots.txt', 'favicon.svg', 'og.png', 'app.js', 'styles.css', 'finder-data.json'].forEach(f => assert(files.includes(f), f)));
+  await ok('sitemap, robots, favicon, og image present', () => ['sitemap.xml', 'robots.txt', 'favicon.svg', 'og.png', 'app.js', 'styles.css', 'finder-data.json', 'intro.mp4', 'intro-poster.jpg', 'intro-portrait.mp4', 'intro-portrait-poster.jpg', 'intro-check.js'].forEach(f => assert(files.includes(f), f)));
   await ok('every internal link and #anchor resolves', () => {
     const idsOf = f => new Set([...fs.readFileSync(path.join(DIST, f), 'utf8').matchAll(/\sid="([^"]+)"/g)].map(m => m[1]));
     const bad = [];

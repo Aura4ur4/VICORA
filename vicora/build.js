@@ -106,8 +106,26 @@ ${C.finder.questions.map((q, i) => `<fieldset class="q"><legend><span class="q-n
 <div id="finder-result" class="finder-result" tabindex="-1" aria-live="polite" hidden></div>
 </div></div></section>`;
 
+// ---- Full-screen video intro (home page, once per session) ----
+// Videos: public/intro.mp4 (landscape, desktop) and public/intro-portrait.mp4 (portrait, phones), each with a -poster.jpg still.
+const INTRO_MENU = [['Services', '/services.html'], ['Solutions', '/solutions.html'], ['Industries', '/industries.html'], ['About', '/about.html'], ['Contact', '/contact.html#form']];
+const igIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r=".9" fill="currentColor" stroke="none"/></svg>';
+const liIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10.5V17M8 7.2v.1M12 17v-6.5M12 13.5c0-1.8 1.2-3 2.7-3s2.3 1 2.3 2.8V17"/></svg>';
+const intro = () => {
+  const soc = [['Instagram', cfg.instagram, igIcon], ['LinkedIn', cfg.linkedin, liIcon]].filter(([, u]) => u);
+  return `<div id="intro" class="intro" role="dialog" aria-modal="true" aria-label="Welcome to VICORA">
+<video class="intro-video" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-landscape="/intro.mp4" data-landscape-poster="/intro-poster.jpg" data-portrait="/intro-portrait.mp4" data-portrait-poster="/intro-portrait-poster.jpg"></video>
+<div class="intro-shade" aria-hidden="true"></div>
+<div class="intro-inner">
+<div class="intro-logo">${wordmark()}</div>
+<nav aria-label="Intro menu"><ul class="intro-menu">${INTRO_MENU.map(([n, h]) => `<li><a href="${h}">${e(n)}</a></li>`).join('')}</ul></nav>
+<button class="btn btn-primary intro-enter" type="button">Enter site</button>
+${soc.length ? `<ul class="intro-social">${soc.map(([n, u, i]) => `<li><a href="${e(u)}" target="_blank" rel="noopener noreferrer" aria-label="VICORA on ${n}">${i}</a></li>`).join('')}</ul>` : ''}
+</div></div>`;
+};
+
 // ============ PAGE SHELL ============
-function page({ file, title, desc, body, jsonld = [], bodyClass = '' }) {
+function page({ file, title, desc, body, jsonld = [], bodyClass = '', withIntro = false }) {
   const url = cfg.siteUrl + '/' + (file === 'index.html' ? '' : file);
   const ld = jsonld.concat([{ '@context': 'https://schema.org', '@type': 'Organization', name: 'VICORA', url: cfg.siteUrl + '/' }]);
   return `<!doctype html>
@@ -126,11 +144,15 @@ function page({ file, title, desc, body, jsonld = [], bodyClass = '' }) {
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="/styles.css">
+${withIntro ? '<script src="/intro-check.js"></script>' : ''}
 ${ld.map(j => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, '\\u003c')}</script>`).join('\n')}
 </head><body class="${bodyClass}">
+${withIntro ? intro() : ''}
+<div class="site">
 ${header('/' + file)}
 <main id="main">${body}</main>
 ${footer()}
+</div>
 <script src="/app.js" defer></script>
 </body></html>`;
 }
@@ -147,7 +169,7 @@ ${[['INPUT', 'New enquiry received', 'Form, email or chat message'], ['AI REASON
 <p class="viz-note">Illustrative example only. This is not a live AI agent.</p></div>`;
 
 pages.push({
-  file: 'index.html',
+  file: 'index.html', withIntro: true,
   title: 'VICORA | AI Agents & Business Automation for Agencies and Businesses',
   desc: 'VICORA designs custom AI agents, business process automation and data solutions that cut repetitive work and connect your tools. Less busywork, more growth.',
   body: `<section class="hero"><div class="container hero-grid">
